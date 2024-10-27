@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"github.com/joho/godotenv"
 	"github.com/khoatruong19/go-ecommerce-microservices/internal/pkg/constants"
@@ -37,12 +38,36 @@ func ConfigAppEnv(environments ...Environment) Environment {
 
 	setRootWorkingDirectoryEnvironment()
 
-	manualEnv := os.Getenv(constants.AppRootPath)
+	manualEnv := os.Getenv(constants.AppEnv)
 	if manualEnv != "" {
 		environment = Environment(manualEnv)
 	}
 
 	return environment
+}
+
+func (env Environment) IsDevelopment() bool {
+	return env == Development
+}
+
+func (env Environment) IsProduction() bool {
+	return env == Production
+}
+
+func (env Environment) IsTest() bool {
+	return env == Test
+}
+
+func (env Environment) GetEnvironmentName() string {
+	return string(env)
+}
+
+func EnvString(key, fallback string) string {
+	if value, ok := syscall.Getenv(key); ok {
+		return value
+	}
+
+	return fallback
 }
 
 func loadEnvFilesRecursive() error {

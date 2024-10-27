@@ -47,7 +47,7 @@ func searchRootDirectory(
 ) (string, error) {
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return "", errors.Wrapf(err, "Error reading directory")
+		return "", errors.WrapIf(err, "Error reading directory")
 	}
 
 	for _, file := range files {
@@ -63,7 +63,7 @@ func searchRootDirectory(
 	parentDir := filepath.Dir(dir)
 	if parentDir == dir {
 		// We've reached the root directory, and no go.mod file was found
-		return "", errors.Wrapf(err, "No go.mod file found")
+		return "", errors.WrapIf(err, "No go.mod file found")
 	}
 
 	return searchRootDirectory(parentDir)
